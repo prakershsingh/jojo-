@@ -1,0 +1,35 @@
+Dim xRg As Range
+'Update by Extendoffice 2018/3/7
+Private Sub Worksheet_Change(ByVal Target As Range)
+    On Error Resume Next
+    If Target.Cells.Count > 1 Then Exit Sub
+  Set xRg = Intersect(Range("Table1[Reminder(end)]"), Target)
+    If xRg Is Nothing Then Exit Sub
+    If IsNumeric(Target.Value) And Target.Value > "Upcoming" Then
+        Call Mail_small_Text_Outlook
+    End If
+End Sub
+Sub Mail_small_Text_Outlook()
+    Dim xOutApp As Object
+    Dim xOutMail As Object
+    Dim xMailBody As String
+    Set xOutApp = CreateObject("Outlook.Application")
+    Set xOutMail = xOutApp.CreateItem(0)
+    xMailBody = "MSA is yet to be made for  " & _
+ _
+              Sheets("sheet1").Range("A2").Value
+    On Error Resume Next
+    With xOutMail
+        .To = "amit.jain@piramal.com,arunakanthi.jupudi@piramal.com,viren.sogani@piramal.com,shilpy.singh@piramal.com"
+        .CC = "debashish.chakravorty@piramal.com"
+        .BCC = ""
+        .Subject = "Notification reminder for MSA creation"
+      
+        .body = xMailBody
+        .display
+        
+    End With
+    On Error GoTo 0
+    Set xOutMail = Nothing
+    Set xOutApp = Nothing
+End Sub
