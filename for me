@@ -1,0 +1,56 @@
+Dim xRg As Range
+'Update by Extendoffice 2018/3/7
+Private Sub Worksheet_Change(ByVal Target As Range)
+    On Error Resume Next
+      
+    If Target.Cells.Count > 1 Then   'Exit if more than one cell has been selected
+        
+        Exit Sub
+    End If
+    
+    If Target Is Nothing Then Exit Sub 'Exit if Selected cell is empty
+    
+    'MsgBox Target.Row
+    
+    Dim HColumnVal As String
+    HColumnVal = Range("$H$" & Target.Row).Value
+    
+    MsgBox HColumnVal
+    
+    If HColumnVal = "Upcoming" Then
+        
+        Dim AColumnVal As String
+        AColumnVal = Range("$A$" & Target.Row).Value
+        MsgBox AColumnVal
+        
+        Call Mail_small_Text_Outlook(AColumnVal) 'Passing the Value of the needed column as a String
+    End If
+    
+End Sub
+
+Sub Mail_small_Text_Outlook(Target As String)
+    
+    Dim xOutApp As Object
+    Dim xOutMail As Object
+    Dim xMailBody As String
+    Set xOutApp = CreateObject("Outlook.Application")
+    Set xOutMail = xOutApp.CreateItem(0)
+    xMailBody = "MSA is yet to be made for  " & Target 'Appending the required column's value to the email body
+    On Error Resume Next
+    With xOutMail
+        .To = "contactme@navneetkhare.co.in"
+        .CC = ""
+        .BCC = ""
+        .Subject = "Notification reminder for MSA creation"
+      
+        .body = xMailBody
+        .display
+        
+    End With
+    On Error GoTo 0
+    Set xOutMail = Nothing
+    Set xOutApp = Nothing
+End Sub
+
+
+
